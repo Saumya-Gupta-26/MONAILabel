@@ -8,6 +8,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Saumya - replacing ScaleIntensityRanged with NormalizeIntensityd. This is because in training of UNet i did (img-mean)/std
+
 from typing import Callable, Sequence
 
 from monai.inferers import Inferer, SlidingWindowInferer
@@ -18,7 +21,7 @@ from monai.transforms import (
     EnsureTyped,
     KeepLargestConnectedComponentd,
     LoadImaged,
-    ScaleIntensityRanged,
+    NormalizeIntensityd,
     Spacingd,
     ToNumpyd,
 )
@@ -59,12 +62,12 @@ class Segmentation(InferTask):
             LoadImaged(keys="image", reader="ITKReader"),
             EnsureTyped(keys="image", device=data.get("device") if data else None),
             EnsureChannelFirstd(keys="image"),
-            Spacingd(keys="image", pixdim=self.target_spacing),
-            ScaleIntensityRanged(keys="image", a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True),
+            #Spacingd(keys="image", pixdim=self.target_spacing),
+            NormalizeIntensityd(keys="image"),
         ]
 
     def inferer(self, data=None) -> Inferer:
-        return SlidingWindowInferer(roi_size=self.roi_size)
+        return SlidingWindowInferer(roi_size=self.roi_size) # Saumya - this allows us our trained UNet to be used since a window of [x,x,x] is inferred each time.
 
     def post_transforms(self, data=None) -> Sequence[Callable]:
         largest_cc = False if not data else data.get("largest_cc", False)

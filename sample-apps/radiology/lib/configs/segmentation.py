@@ -8,6 +8,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# July 27 onwards-----
+# Added by Saumya. For original file, see segmentation_orig.py
+# to use custom FCN model
+# on Aorta dataset
+
 import logging
 import os
 from distutils.util import strtobool
@@ -15,7 +21,8 @@ from typing import Any, Dict, Optional, Union
 
 import lib.infers
 import lib.trainers
-from monai.networks.nets import UNet
+#from monai.networks.nets import UNet
+from saumNets.modelUNet import UNet
 
 from monailabel.interfaces.config import TaskConfig
 from monailabel.interfaces.tasks.infer import InferTask
@@ -31,19 +38,8 @@ class Segmentation(TaskConfig):
 
         # Labels
         self.labels = {
-            "spleen": 1,
-            "right kidney": 2,
-            "left kidney": 3,
-            "gallbladder": 4,
-            "esophagus": 5,
-            "liver": 6,
-            "stomach": 7,
-            "aorta": 8,
-            "inferior vena cava": 9,
-            "portal vein and splenic vein": 10,
-            "pancreas": 11,
-            "right adrenal gland": 12,
-            "left adrenal gland": 13,
+            "lumen": 1,
+            "wall": 2,
         }
 
         # Number of input channels - 4 for BRATS and 1 for spleen
@@ -56,15 +52,17 @@ class Segmentation(TaskConfig):
         ]
 
         # Download PreTrained Model
-        if strtobool(self.conf.get("use_pretrained_model", "true")):
+        if strtobool(self.conf.get("use_pretrained_model", "false")):
             url = f"{self.conf.get('pretrained_path', self.PRE_TRAINED_PATH)}/segmentation_unet_multilabel.pt"
             download_file(url, self.path[0])
 
         self.target_spacing = (1.0, 1.0, 1.0)  # target space for image
         # Setting ROI size should consider max width, height and depth of the images
-        self.roi_size = (128, 128, 128)  # sliding window size for train and infer
+        #self.roi_size = (128, 128, 128)  # sliding window size for train and infer
+        self.roi_size = (512,512,80)  # Saumya - Modified according to my unet partition function for inference
 
-        # Network
+        # Network - Changed to eccv unet
+        '''
         self.network = UNet(
             spatial_dims=3,
             in_channels=self.number_intensity_ch,
@@ -74,7 +72,11 @@ class Segmentation(TaskConfig):
             num_res_units=2,
             norm="batch",
         )
+        '''
+        self.network = UNet(in_channels=1, out_channels=3, dim=3)
+        # the weight models/pretrained_segmentation.pt is /scr/saumgupta/aorta/slicer-tool/unet-train/NCWHD/checkpoints/trial2/model_best.pth
 
+    # Saumya - keeping largest_cc as True to generate clean outputs // False to compare with UNet outputs generated from code
     def infer(self) -> Union[InferTask, Dict[str, InferTask]]:
         task: InferTask = lib.infers.Segmentation(
             path=self.path,
@@ -83,10 +85,11 @@ class Segmentation(TaskConfig):
             target_spacing=self.target_spacing,
             labels=self.labels,
             preload=strtobool(self.conf.get("preload", "false")),
-            config={"largest_cc": True},
+            config={"largest_cc": False},
         )
         return task
 
+    # For training, it will call Segmentation class in lib/trainer. You can create a file SegmentationAorta to make changes.
     def trainer(self) -> Optional[TrainTask]:
         output_dir = os.path.join(self.model_dir, self.name)
         task: TrainTask = lib.trainers.Segmentation(
