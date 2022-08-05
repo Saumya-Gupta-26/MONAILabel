@@ -11,34 +11,36 @@
 import logging
 
 import torch
-from monai.apps.deepedit.transforms import NormalizeLabelsInDatasetd
+from lib.transforms.transforms import VertHeatMap
 from monai.handlers import TensorBoardImageHandler, from_engine
 from monai.inferers import SlidingWindowInferer
-from monai.losses import DiceCELoss
+from monai.optimizers import Novograd
 from monai.transforms import (
     Activationsd,
-    AsDiscreted,
     CropForegroundd,
     EnsureChannelFirstd,
     EnsureTyped,
+    GaussianSmoothd,
     LoadImaged,
-    RandCropByPosNegLabeld,
-    RandFlipd,
-    RandRotate90d,
+    NormalizeIntensityd,
+    Orientationd,
+    RandRotated,
+    RandScaleIntensityd,
     RandShiftIntensityd,
-    ScaleIntensityRanged,
+    RandZoomd,
+    ScaleIntensityd,
     SelectItemsd,
     Spacingd,
     SpatialPadd,
 )
 
 from monailabel.tasks.train.basic_train import BasicTrainTask, Context
-from monailabel.tasks.train.utils import region_wise_metrics
+from monailabel.tasks.train.utils import region_wise_rmse
 
 logger = logging.getLogger(__name__)
 
 
-class Segmentation(BasicTrainTask):
+class LocalizationVertebra(BasicTrainTask):
     def __init__(
         self,
         model_dir,
@@ -46,7 +48,7 @@ class Segmentation(BasicTrainTask):
         roi_size=(96, 96, 96),
         target_spacing=(1.0, 1.0, 1.0),
         num_samples=4,
-        description="Train Segmentation model",
+        description="Train vertebra localization model",
         **kwargs,
     ):
         self._network = network
@@ -59,10 +61,10 @@ class Segmentation(BasicTrainTask):
         return self._network
 
     def optimizer(self, context: Context):
-        return torch.optim.Adam(context.network.parameters(), lr=1e-3)
+        return Novograd(context.network.parameters(), 0.0001)
 
     def loss_function(self, context: Context):
-        return DiceCELoss(to_onehot_y=True, softmax=True)
+        return torch.nn.MSELoss(reduction="mean")
 
     def lr_scheduler_handler(self, context: Context):
         return None
@@ -73,71 +75,57 @@ class Segmentation(BasicTrainTask):
     def train_pre_transforms(self, context: Context):
         return [
             LoadImaged(keys=("image", "label"), reader="ITKReader"),
-            NormalizeLabelsInDatasetd(keys="label", label_names=self._labels),  # Specially for missing labels
             EnsureChannelFirstd(keys=("image", "label")),
+            Orientationd(keys=("image", "label"), axcodes="RAS"),
             Spacingd(keys=("image", "label"), pixdim=self.target_spacing, mode=("bilinear", "nearest")),
-            CropForegroundd(keys=("image", "label"), source_key="image"),
-            SpatialPadd(keys=("image", "label"), spatial_size=self.roi_size),
-            ScaleIntensityRanged(keys="image", a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True),
-            RandCropByPosNegLabeld(
-                keys=("image", "label"),
-                label_key="label",
-                spatial_size=self.roi_size,
-                pos=1,
-                neg=1,
-                num_samples=self.num_samples,
-                image_key="image",
-                image_threshold=0,
+            CropForegroundd(keys=("image", "label"), source_key="label"),
+            VertHeatMap(keys="label", label_names=self._labels),
+            GaussianSmoothd(keys="image", sigma=0.75),
+            NormalizeIntensityd(keys="image", divisor=2048.0),
+            ScaleIntensityd(keys="image", minv=-1.0, maxv=1.0),
+            RandScaleIntensityd(keys="image", factors=(0.75, 1.25), prob=0.80),
+            RandShiftIntensityd(keys="image", offsets=(-0.25, 0.25), prob=0.80),
+            RandRotated(
+                keys=("image", "label"), range_x=(-0.26, 0.26), range_y=(-0.26, 0.26), range_z=(-0.26, 0.26), prob=0.80
             ),
+            # Does this do the function of scaling by [−0.85, 1.15] ?
+            RandZoomd(keys=("image", "label"), prob=0.70, min_zoom=0.6, max_zoom=1.15),
+            #
+            SpatialPadd(keys=("image", "label"), spatial_size=self.roi_size),
             EnsureTyped(keys=("image", "label"), device=context.device),
-            RandFlipd(keys=("image", "label"), spatial_axis=[0], prob=0.10),
-            RandFlipd(keys=("image", "label"), spatial_axis=[1], prob=0.10),
-            RandFlipd(keys=("image", "label"), spatial_axis=[2], prob=0.10),
-            RandRotate90d(keys=("image", "label"), prob=0.10, max_k=3),
-            RandShiftIntensityd(keys="image", offsets=0.1, prob=0.5),
             SelectItemsd(keys=("image", "label")),
         ]
 
     def train_post_transforms(self, context: Context):
         return [
             EnsureTyped(keys="pred", device=context.device),
-            Activationsd(keys="pred", softmax=True),
-            AsDiscreted(
-                keys=("pred", "label"),
-                argmax=(True, False),
-                to_onehot=(len(self._labels) + 1, len(self._labels) + 1),
-            ),
+            Activationsd(keys="pred", other=torch.nn.functional.leaky_relu),
+            # Activationsd(keys="pred", sigmoid=True),
         ]
 
     def val_pre_transforms(self, context: Context):
         return [
             LoadImaged(keys=("image", "label"), reader="ITKReader"),
-            NormalizeLabelsInDatasetd(keys="label", label_names=self._labels),  # Specially for missing labels
-            EnsureChannelFirstd(keys=("image", "label")),
-            Spacingd(keys=("image", "label"), pixdim=self.target_spacing, mode=("bilinear", "nearest")),
-            ScaleIntensityRanged(keys="image", a_min=-175, a_max=250, b_min=0.0, b_max=1.0, clip=True),
             EnsureTyped(keys=("image", "label")),
+            EnsureChannelFirstd(keys=("image", "label")),
+            Orientationd(keys=["image", "label"], axcodes="RAS"),
+            Spacingd(keys=("image", "label"), pixdim=self.target_spacing, mode=("bilinear", "nearest")),
+            VertHeatMap(keys="label", label_names=self._labels),
+            GaussianSmoothd(keys="image", sigma=0.75),
+            NormalizeIntensityd(keys="image", divisor=2048.0),
+            ScaleIntensityd(keys="image", minv=-1.0, maxv=1.0),
+            SpatialPadd(keys=("image", "label"), spatial_size=self.roi_size),
             SelectItemsd(keys=("image", "label")),
         ]
 
     def val_inferer(self, context: Context):
         return SlidingWindowInferer(roi_size=self.roi_size, sw_batch_size=8)
 
-    def norm_labels(self):
-        # This should be applied along with NormalizeLabelsInDatasetd transform
-        new_label_nums = {}
-        for idx, (key_label, val_label) in enumerate(self._labels.items(), start=1):
-            if key_label != "background":
-                new_label_nums[key_label] = idx
-            if key_label == "background":
-                new_label_nums["background"] = 0
-        return new_label_nums
-
     def train_key_metric(self, context: Context):
-        return region_wise_metrics(self.norm_labels(), self.TRAIN_KEY_METRIC, "train")
+        return region_wise_rmse(self._labels, "train_rmse", "train")
 
     def val_key_metric(self, context: Context):
-        return region_wise_metrics(self.norm_labels(), self.VAL_KEY_METRIC, "val")
+        return region_wise_rmse(self._labels, "val_mean_rmse", "val")
 
     def train_handlers(self, context: Context):
         handlers = super().train_handlers(context)
