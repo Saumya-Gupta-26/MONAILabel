@@ -44,6 +44,10 @@ Open in dropdown -> Active learning -> MONAILabel
 Label Server to enter:
 http://localhost:8000
 
+
+Remote GitHub
+remote name: origin_monailabel
+
 =====================
 
 MONAI Slack
