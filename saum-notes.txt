@@ -24,6 +24,8 @@ https://github.com/Project-MONAI/MONAILabel
 How to add a new model:
 https://github.com/Project-MONAI/MONAILabel/tree/main/sample-apps/radiology#how-to-add-new-model
 
+conda activate monai
+
 Custom run command in tmux:
 Do in tmux in case need to do force shutdown
 tmux attach -t monai1
@@ -71,11 +73,52 @@ Hope this helps
 -------
 03 Aug 2022
 
-Saumya: I would like to add a new module (like Segment Editor & Scribbles) under MONAILabel in 3D Slicer. Could you point me to the relevant files to modify both front-end and back-end in order to do this?
+Saumya: 
+I would like to add a new module (like Segment Editor & Scribbles) under MONAILabel in 3D Slicer. Could you point me to the relevant files to modify both front-end and back-end in order to do this?
 
-Muhammad Asad: For 3D Slicer related updates, the most relevant files for updating the 3D Slicer client plugins are under here: https://github.com/Project-MONAI/MONAILabel/tree/main/plugins/slicer/MONAILabel
+Muhammad Asad:
+For 3D Slicer related updates, the most relevant files for updating the 3D Slicer client plugins are under here: https://github.com/Project-MONAI/MONAILabel/tree/main/plugins/slicer/MONAILabel
 
 If you also wish to update server, e.g. updating scribbles, you can update/add your own modules like scribbles histogram method. The most relevant file for this is: https://github.com/Project-MONAI/MONAILabel/blob/main/monailabel/scribbles/infer.py
 
 and it is utilised in radiology sample app here:
 https://github.com/Project-MONAI/MONAILabel/blob/main/sample-apps/radiology/main.py#L118-L137 
+
+
+====
+UI design/look:
+
+Assuming binary segmentation case (0,1) for now.
+
+- A module like 'Auto-segmentation'. Under it will be a checkbox (see below), alongwith a list of uncertain regions.
+- [high-priority] list of uncertain regions:
+    - item number
+    - mention the uncertainty value.
+    - tickmark and wrongmark
+        - if tickmark is pressed --- structure to be included (1 value)
+        - if wrongmark is pressed --- structure to be excluded (0 value)
+    - clicking on an item should highlight that portion in 3d view.
+    - in 3d view, if we hover, it should toggle between 1 value (structure exists) or 0 value (structure doesn't exist)
+- uncertainty threshold --- show only regions greater than a certain value.
+- [low-priority] checkbox for overlay. If marked, then in 3d view, all have the rplaceatlas-sorta highlight. Clicking on one, shows which item in list is that region.
+- [low-priority] accept (tickmark) all items when uncertainty > threshold
+
+
+UI Notes:
+
+From file, /home/saumya/slicer-tool/MONAILabel/plugins/slicer/MONAILabel/MONAILabel.py
+it says they use Qt Designer
+
+Need to try ---
+1) read the readme : /home/saumya/slicer-tool/MONAILabel/plugins/slicer/README.md
+It shows how to connect the MONAI extension in 3D slicer to code....that is, if UI changes are made in code, how to reflect that in 3D slicer.
+Give the path: /run/user/1000/gvfs/sftp:host=topox.cs.stonybrook.edu,port=130/home/saumya/slicer-tool/MONAILabel/plugins/slicer/MONAILabel
+This will reflect changes to code on topox server
+
+2) Need to add our UI buttons through Qt Designer somehow. Maybe after step 1? Check.
+Open 3D Slicer -> MONAILabel -> Click the 'Edit' and 'Edit UI' buttons.
+'Edit' allows to modify the MONAILabel.py file
+'Edit UI' allows to modify the MONAILabel.ui file via Qt Designer.
+These files are on my local though. See if we can connect it to paths to files in topox
+
+3) Slicer's Developer guide: https://slicer.readthedocs.io/en/latest/developer_guide/index.html

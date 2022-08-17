@@ -16,7 +16,7 @@ import pathlib
 from typing import Hashable, Sequence, Tuple, Union
 
 import torch
-from expiring_dict import ExpiringDict
+#from expiring_dict import ExpiringDict
 from monai.config import KeysCollection
 from monai.data import MetaTensor
 from monai.transforms import Transform
@@ -27,7 +27,7 @@ from monailabel.utils.sessions import Sessions
 logger = logging.getLogger(__name__)
 
 _cache_path = os.path.join(pathlib.Path.home(), ".cache", "monailabel", "cacheT")
-_data_mem_cache = ExpiringDict(ttl=600)
+#_data_mem_cache = ExpiringDict(ttl=600)
 _data_file_cache = Sessions(store_path=_cache_path, expiry=600)
 
 
@@ -91,8 +91,8 @@ class CacheTransformDatad(Transform):
         return d
 
     def _load(self, hash_key):
-        if self.in_memory:
-            return _data_mem_cache.get(hash_key)
+        #if self.in_memory:
+            #return _data_mem_cache.get(hash_key)
 
         info = _data_file_cache.get_session(session_id=hash_key)
         if info and os.path.isfile(info.image):
@@ -100,9 +100,9 @@ class CacheTransformDatad(Transform):
         return None
 
     def _save(self, hash_key, obj):
-        if self.in_memory:
-            _data_mem_cache.ttl(key=hash_key, value=copy.deepcopy(obj), ttl=self.ttl)
-        else:
+        #if self.in_memory:
+            #_data_mem_cache.ttl(key=hash_key, value=copy.deepcopy(obj), ttl=self.ttl)
+        #else:
             os.makedirs(_cache_path, exist_ok=True)
 
             cached_file = os.path.join(_cache_path, f"{hash_key}.tmp")
