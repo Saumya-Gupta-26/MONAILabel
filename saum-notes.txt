@@ -24,17 +24,22 @@ https://github.com/Project-MONAI/MONAILabel
 How to add a new model:
 https://github.com/Project-MONAI/MONAILabel/tree/main/sample-apps/radiology#how-to-add-new-model
 
-conda activate monai
-
 Custom run command in tmux:
 Do in tmux in case need to do force shutdown
+tmux new -s monai1
 tmux attach -t monai1
+conda activate monai
 export PATH=$PATH:`pwd`/MONAILabel/monailabel/scripts
+
+if you get the error : "monailabel: command not found" , do,
+pip install monailabel-weekly
 
 To run on GPU:
 export CUDA_VISIBLE_DEVICES=3,4,5,6
 To run on CPU:
 export CUDA_VISIBLE_DEVICES=""
+
+cd slicer-tool/
 
 monailabel start_server --app MONAILabel/sample-apps/radiology --studies /data/saumgupta/slicer-tool/datasets/Task10_Aorta/imagesTr --conf models segmentation
 
@@ -122,3 +127,10 @@ Open 3D Slicer -> MONAILabel -> Click the 'Edit' and 'Edit UI' buttons.
 These files are on my local though. See if we can connect it to paths to files in topox
 
 3) Slicer's Developer guide: https://slicer.readthedocs.io/en/latest/developer_guide/index.html
+
+
+4) Under "Uncertainty Annotation" Module, add a button called "Generate uncertainty map". Only on pressing this, the following should happen - 
+    - Run the model N times and generate the uncertainty map from it. For initial ease, i will assume the uncertainty map exists and just read from a filepath
+    - On the uncertainty map, run connected components to get idea of different structures and their uncertainty.
+    - Send this list of structural uncertainty and display as a list in the UI.
+    - Connect each entry in the list in the UI to the actual display views.

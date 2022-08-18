@@ -328,6 +328,7 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
         # Saumya - Uncertainty Annotation Module (Just the UI part)
         una_layout = qt.QVBoxLayout(self.ui.una_collapsibleButton)
+        una_generate_button = qt.QPushButton("Generate uncertainty map")
         una_list = qt.QListWidget()
         for i in range(random.randint(3,10)):
             # Add to list a new item (item is simply an entry in your list)
@@ -340,6 +341,7 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
             # Associate the custom widget to the list entry
             una_list.setItemWidget(item, row)
+        una_layout.addWidget(una_generate_button)
         una_layout.addWidget(una_list)
 
 
