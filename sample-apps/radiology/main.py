@@ -17,6 +17,7 @@ from typing import Dict
 import lib.configs
 from lib.activelearning import First
 
+import monailabel
 from monailabel.interfaces.app import MONAILabelApp
 from monailabel.interfaces.config import TaskConfig
 from monailabel.interfaces.datastore import Datastore
@@ -91,8 +92,9 @@ class MyApp(MONAILabelApp):
             app_dir=app_dir,
             studies=studies,
             conf=conf,
-            name="MONAILabel - Radiology",
+            name=f"MONAILabel - Radiology ({monailabel.__version__})",
             description="DeepLearning models for radiology",
+            version=monailabel.__version__,
         )
 
     def init_datastore(self) -> Datastore:
@@ -166,6 +168,7 @@ class MyApp(MONAILabelApp):
                 model_segmentation_vertebra=infers["segmentation_vertebra"],  # third stage
                 description="Combines three stage for vertebra segmentation",
             )
+        logger.info(infers)
         return infers
 
     def init_trainers(self) -> Dict[str, TrainTask]:
@@ -269,7 +272,9 @@ def main():
         # Run on all devices
         for device in device_list():
             # res = app.infer(request={"model": args.model, "image": image_id, "device": device})
-            res = app.infer(request={"model": "vertebra_pipeline", "image": image_id, "device": device})
+            res = app.infer(
+                request={"model": "vertebra_pipeline", "image": image_id, "device": device, "slicer": False}
+            )
             label = res["file"]
             label_json = res["params"]
             test_dir = os.path.join(args.studies, "test_labels")
@@ -288,7 +293,7 @@ def main():
         request={
             "model": args.model,
             "max_epochs": 10,
-            "dataset": "CacheDataset",  # PersistentDataset, CacheDataset
+            "dataset": "Dataset",  # PersistentDataset, CacheDataset
             "train_batch_size": 1,
             "val_batch_size": 1,
             "multi_gpu": False,
