@@ -178,76 +178,74 @@
        </widget>
       </item>
       <item row="8" column="0" colspan="2">
-       <widget class="QWidget" name="trainWidget">
-        <layout class="QGridLayout" name="gridLayout_5">
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>Status:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QProgressBar" name="trainingProgressBar">
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Accuracy:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QProgressBar" name="accuracyProgressBar">
-           <property name="toolTip">
-            <string>Average Dice score computed over submitted labels</string>
-           </property>
-           <property name="value">
-            <number>0</number>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>Model:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QComboBox" name="trainerBox">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="trainingButton">
-             <property name="text">
-              <string>Train</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="stopTrainingButton">
-             <property name="text">
-              <string>Stop</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Status:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QProgressBar" name="trainingProgressBar">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Accuracy:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QProgressBar" name="accuracyProgressBar">
+          <property name="toolTip">
+           <string>Average Dice score computed over submitted labels</string>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Model:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QComboBox" name="trainerBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="trainingButton">
+            <property name="text">
+             <string>Train</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="stopTrainingButton">
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
        </layout>
-      </widget>
       </item>
       <item row="4" column="1">
        <widget class="QPushButton" name="saveLabelButton">
@@ -518,37 +516,6 @@
       </property>
       <item row="2" column="1" colspan="2">
        <layout class="QGridLayout" name="gridLayout_7">
-        <item row="4" column="6">
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="4">
-           <widget class="QPushButton" name="updateScribblesButton">
-            <property name="text">
-             <string>Update</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="paintScribblesButton">
-            <property name="text">
-             <string>Paint</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="eraseScribblesButton">
-            <property name="text">
-             <string>Erase</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
         <item row="2" column="6">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
@@ -608,20 +575,65 @@
           </property>
          </widget>
         </item>
+        <item row="4" column="6">
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="4">
+           <widget class="QPushButton" name="updateScribblesButton">
+            <property name="text">
+             <string>Update</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="paintScribblesButton">
+            <property name="text">
+             <string>Paint</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="eraseScribblesButton">
+            <property name="text">
+             <string>Erase</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="6">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="scribblesROILabel">
+            <property name="text">
+             <string>ROI:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="qSlicerMarkupsPlaceWidget" name="scribblesPlaceWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="placeMultipleMarkups">
+             <enum>qSlicerMarkupsPlaceWidget::ForcePlaceSingleMarkup</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item row="2" column="2" rowspan="2">
          <widget class="QLabel" name="label_13">
           <property name="text">
            <string>Label:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QComboBox" name="scribblesMethodSelector">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
           </property>
          </widget>
         </item>
@@ -635,6 +647,19 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="3">
+         <widget class="QComboBox" name="scribLabelComboBox"/>
+        </item>
+        <item row="0" column="3">
+         <widget class="QComboBox" name="scribblesMethodSelector">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="3">
          <widget class="QComboBox" name="scribblesSelector">
           <property name="sizePolicy">
@@ -644,33 +669,6 @@
            </sizepolicy>
           </property>
          </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="scribLabelComboBox"/>
-        </item>
-        <item row="0" column="6">
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QLabel" name="scribblesROILabel">
-            <property name="text">
-             <string>ROI:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="qSlicerMarkupsPlaceWidget" name="scribblesPlaceWidget">
-            <property name="placeMultipleMarkups">
-             <enum>qSlicerMarkupsPlaceWidget::ForcePlaceSingleMarkup</enum>
-            </property>
-            <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-              </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </item>
        </layout>
       </item>
@@ -716,9 +714,19 @@
     </widget>
    </item>
    <item>
+    <widget class="ctkCollapsibleButton" name="una_collapsibleButton">
+     <property name="text">
+      <string>Uncertainty Annotation</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
