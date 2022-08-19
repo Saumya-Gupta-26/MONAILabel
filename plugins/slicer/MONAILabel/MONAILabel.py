@@ -327,23 +327,10 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
 
         # Saumya - Uncertainty Annotation Module (Just the UI part)
-        una_layout = qt.QVBoxLayout(self.ui.una_collapsibleButton)
-        una_generate_button = qt.QPushButton("Generate uncertainty map")
-        una_list = qt.QListWidget()
-        for i in range(random.randint(3,10)):
-            # Add to list a new item (item is simply an entry in your list)
-            item = qt.QListWidgetItem(una_list)
-            una_list.addItem(item)
-
-            # Instanciate a custom widget 
-            row = UnA_ListWidget(round(random.random(),3))
-            item.setSizeHint(qt.QSize(211, 48))
-
-            # Associate the custom widget to the list entry
-            una_list.setItemWidget(item, row)
-        una_layout.addWidget(una_generate_button)
-        una_layout.addWidget(una_list)
-
+        self.una_layout = qt.QVBoxLayout(self.ui.una_collapsibleButton)
+        self.una_generate_button = qt.QPushButton("Generate uncertainty map")
+        self.una_layout.addWidget(self.una_generate_button)
+        self.una_list = None
 
         # Connections
         self.ui.fetchServerInfoButton.connect("clicked(bool)", self.onClickFetchInfo)
@@ -361,6 +348,9 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.scribLabelComboBox.connect("currentIndexChanged(int)", self.onSelectScribLabel)
         self.ui.dgUpdateButton.connect("clicked(bool)", self.onUpdateDeepgrow)
         self.ui.dgUpdateCheckBox.setStyleSheet("padding-left: 10px;")
+        #Saumya
+        self.una_generate_button.connect("clicked(bool)", self.populateUncertaintyList)
+        
 
         # Scribbles
         # brush and eraser icon from: https://tablericons.com/
@@ -418,6 +408,28 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             if text:
                 settings = qt.QSettings()
                 settings.setValue("MONAILabel/clientId", text)
+
+    # Saumya
+    def populateUncertaintyList(self):
+        if  self.una_list is None:
+            self.una_list = qt.QListWidget()
+            self.una_layout.addWidget(self.una_list)
+        else:
+            self.una_list.clear() # Removes all items and selections in the listWidget
+
+        for i in range(random.randint(3,10)):
+            # Add to list a new item (item is simply an entry in your list)
+            item = qt.QListWidgetItem(self.una_list)
+            self.una_list.addItem(item)
+
+            # Instanciate a custom widget 
+            row = UnA_ListWidget(round(random.random(),3))
+            item.setSizeHint(qt.QSize(211, 48))
+
+            # Associate the custom widget to the list entry
+            self.una_list.setItemWidget(item, row)
+        
+
 
     def cleanup(self):
         self.removeObservers()

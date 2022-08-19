@@ -135,8 +135,13 @@ These files are on my local though. See if we can connect it to paths to files i
     - Send this list of structural uncertainty and display as a list in the UI.
     - Connect each entry in the list in the UI to the actual display views.
 
+5) Only on pressing button should the uncertainty-list be displayed
+6) Read from the .txt file to populate the uncertainty-list
+7) Selecting an item from the uncertainty-list should highlight (like rplace-atlas) the centroid location in the 3 views. Currently only do for 2D.
+8) Working of buttons tickmark & cross, ie, it should update the seg map and save.
 
-5) BUG:
+
+x) [Solved] BUG:
     1) If i use the main branch (git checkout main), then when I run the server, and, use the UI topox-path, functionality works --- that is, in 3D Slicer, the module connects to the server and I can click "Next Sample" and all.
     2) When I use my branch (git checkout saum-branch), connecting to the server in 3D Slicer does not work --- that is, in 3D Slicer, the "Next Sample" button doesn't work.
         - Need to check if the issue is with the code changes made for UI or the server.
