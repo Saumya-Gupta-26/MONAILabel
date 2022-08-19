@@ -134,3 +134,12 @@ These files are on my local though. See if we can connect it to paths to files i
     - On the uncertainty map, run connected components to get idea of different structures and their uncertainty.
     - Send this list of structural uncertainty and display as a list in the UI.
     - Connect each entry in the list in the UI to the actual display views.
+
+
+5) BUG:
+    1) If i use the main branch (git checkout main), then when I run the server, and, use the UI topox-path, functionality works --- that is, in 3D Slicer, the module connects to the server and I can click "Next Sample" and all.
+    2) When I use my branch (git checkout saum-branch), connecting to the server in 3D Slicer does not work --- that is, in 3D Slicer, the "Next Sample" button doesn't work.
+        - Need to check if the issue is with the code changes made for UI or the server.
+        - In 3D Slicer, change the UI path to the default one. The server code will be from saum-branch though.
+        - If above works, it means the error is with the UI code. Change the UI path to topox, and use the server code from saum-branch. However, comment out the 'Uncertainty Annotation' UI code to see if that's causing issue.
+        - OR , make 2 branches --- saum-server and saum-ui. Each branch has either the server functionality or the UI functionality. Try with both to narrow down the problem.
