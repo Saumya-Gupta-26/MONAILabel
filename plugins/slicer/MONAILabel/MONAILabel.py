@@ -416,7 +416,11 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             self.una_layout.addWidget(self.una_list)
         else:
             self.una_list.clear() # Removes all items and selections in the listWidget
+        self.randomPopulate()
+        #self.filePopulate()
 
+    # Populates the Uncertainty list with random values
+    def randomPopulate(self):
         for i in range(random.randint(3,10)):
             # Add to list a new item (item is simply an entry in your list)
             item = qt.QListWidgetItem(self.una_list)
@@ -424,6 +428,25 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
             # Instanciate a custom widget 
             row = UnA_ListWidget(round(random.random(),3))
+            item.setSizeHint(qt.QSize(211, 48))
+
+            # Associate the custom widget to the list entry
+            self.una_list.setItemWidget(item, row)
+
+    # Populates the Uncertainty list from a .txt file
+    def filePopulate(self):
+        srcfilepath = os.path.join(os.path.dirname(__file__), "Uncertainty", "img9_1_2_uncertainty.txt")
+
+        with open(srcfilepath, 'r') as fp:
+            allLines = fp.readlines()
+
+        for line in allLines:
+            # Add to list a new item (item is simply an entry in your list)
+            item = qt.QListWidgetItem(self.una_list)
+            self.una_list.addItem(item)
+
+            # Instanciate a custom widget 
+            row = UnA_ListWidget(round(float(line.strip()),3))
             item.setSizeHint(qt.QSize(211, 48))
 
             # Associate the custom widget to the list entry
