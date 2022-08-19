@@ -178,6 +178,7 @@
        </widget>
       </item>
       <item row="8" column="0" colspan="2">
+       <widget class="QWidget" name="trainWidget">
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="1" column="0">
          <widget class="QLabel" name="label_9">
@@ -246,6 +247,7 @@
          </layout>
         </item>
        </layout>
+      </widget>
       </item>
       <item row="4" column="1">
        <widget class="QPushButton" name="saveLabelButton">
@@ -516,6 +518,37 @@
       </property>
       <item row="2" column="1" colspan="2">
        <layout class="QGridLayout" name="gridLayout_7">
+        <item row="4" column="6">
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="4">
+           <widget class="QPushButton" name="updateScribblesButton">
+            <property name="text">
+             <string>Update</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="paintScribblesButton">
+            <property name="text">
+             <string>Paint</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="eraseScribblesButton">
+            <property name="text">
+             <string>Erase</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
         <item row="2" column="6">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
@@ -575,36 +608,45 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="6">
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="4">
-           <widget class="QPushButton" name="updateScribblesButton">
-            <property name="text">
-             <string>Update</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="paintScribblesButton">
-            <property name="text">
-             <string>Paint</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="eraseScribblesButton">
-            <property name="text">
-             <string>Erase</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <item row="2" column="2" rowspan="2">
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>Label:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QComboBox" name="scribblesMethodSelector">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="scribblesMethodLabel">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>Model:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QComboBox" name="scribblesSelector">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QComboBox" name="scribLabelComboBox"/>
         </item>
         <item row="0" column="6">
          <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -629,46 +671,6 @@
            </widget>
           </item>
          </layout>
-        </item>
-        <item row="2" column="2" rowspan="2">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>Label:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="scribblesMethodLabel">
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string>Model:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QComboBox" name="scribLabelComboBox"/>
-        </item>
-        <item row="0" column="3">
-         <widget class="QComboBox" name="scribblesMethodSelector">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QComboBox" name="scribblesSelector">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
         </item>
        </layout>
       </item>
@@ -724,9 +726,6 @@
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Expanding</enum>
      </property>
      <property name="sizeHint" stdset="0">
       <size>
