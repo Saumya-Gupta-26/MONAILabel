@@ -32,32 +32,6 @@ from MONAILabelLib import GenericAnatomyColors, MONAILabelClient
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 
-import random
-
-# Saumya - Custom widget for list (Uncertainty Annotator)
-class UnA_ListWidget(qt.QWidget):
-    def __init__(self, uncertainty_val, parent=None):
-        super(UnA_ListWidget, self).__init__(parent)
-
-        self.row = qt.QHBoxLayout()
-
-        self.row.addWidget(qt.QLabel("Uncertainty: {0:.3f}".format(uncertainty_val)))
-
-        yesButton = qt.QPushButton("")
-        iconPath = os.path.join(os.path.dirname(__file__), "Resources", "Icons", "correct.png")
-        yesButton.setIcon(qt.QIcon(iconPath))
-        yesButton.setIconSize(qt.QSize(20,20))
-
-        noButton = qt.QPushButton("")
-        iconPath = os.path.join(os.path.dirname(__file__), "Resources", "Icons", "wrong.png")
-        noButton.setIcon(qt.QIcon(iconPath))
-        noButton.setIconSize(qt.QSize(20,20))
-
-        self.row.addWidget(yesButton)
-        self.row.addWidget(noButton)
-
-        self.setLayout(self.row)
-
 
 class MONAILabel(ScriptedLoadableModule):
     def __init__(self, parent):
@@ -324,26 +298,6 @@ class MONAILabelWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.ui.dgNegativeControlPointPlacementWidget.deleteButton().show()
 
         self.ui.dgUpdateButton.setIcon(self.icon("segment.png"))
-
-
-        # Saumya - Uncertainty Annotation Module (Just the UI part)
-        una_layout = qt.QVBoxLayout(self.ui.una_collapsibleButton)
-        una_generate_button = qt.QPushButton("Generate uncertainty map")
-        una_list = qt.QListWidget()
-        for i in range(random.randint(3,10)):
-            # Add to list a new item (item is simply an entry in your list)
-            item = qt.QListWidgetItem(una_list)
-            una_list.addItem(item)
-
-            # Instanciate a custom widget 
-            row = UnA_ListWidget(round(random.random(),3))
-            item.setSizeHint(qt.QSize(211, 48))
-
-            # Associate the custom widget to the list entry
-            una_list.setItemWidget(item, row)
-        una_layout.addWidget(una_generate_button)
-        una_layout.addWidget(una_list)
-
 
         # Connections
         self.ui.fetchServerInfoButton.connect("clicked(bool)", self.onClickFetchInfo)
